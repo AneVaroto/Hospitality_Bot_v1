@@ -1,2 +1,23 @@
-429: Too Many Requests
-For more on scraping GitHub and how it may affect your rights, please review our Terms of Service (https://docs.github.com/en/site-policy/github-terms/github-terms-of-service).
+from dotenv import load_dotenv
+import discord
+import os
+import ssl
+import cer2fi
+# Load environment variables from .env file
+load_dotenv()
+# Fix SSL cer2ficate issue
+os.environ['SSL_CERT_FILE'] = cer2fi.where()
+# Set up intents
+intents = discord.Intents.default()
+intents.message_content = True # Ensure that your bot can read message content
+client = discord.Client(intents=intents)
+@client.event
+async def on_ready():
+print('We have logged in as {0.user}'.format(client))
+@client.event
+async def on_message(message):
+if message.author == client.user:
+return
+if message.content.startswith('$hello'):
+await message.channel.send('Hello!')
+client.run(os.getenv('TOKEN'))
